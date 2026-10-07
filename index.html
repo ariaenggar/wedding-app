@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Buku Tamu Pernikahan</title>
+    <style>
+        /* --- GLOBAL STYLES --- */
+        :root {
+            --primary: #4a4036;
+            --gold: #bfa15f;
+            --bg-color: #f9f6f0;
+        }
+        body, html {
+            margin: 0; padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100%; width: 100%;
+            background-color: var(--bg-color);
+            color: var(--primary);
+        }
+        * { box-sizing: border-box; }
+
+        /* --- MODE SELECTOR SCREEN --- */
+        #mode-selector {
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            height: 100vh; text-align: center;
+            background: linear-gradient(135deg, #f9f6f0 0%, #e6dfd5 100%);
+        }
+        .mode-btn {
+            padding: 20px 40px; margin: 15px;
+            font-size: 1.2rem; font-weight: bold;
+            color: white; background-color: var(--primary);
+            border: none; border-radius: 8px;
+            cursor: pointer; transition: 0.3s;
+            width: 300px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .mode-btn:hover { background-color: var(--gold); transform: translateY(-2px); }
+
+        /* --- CONTROL PANEL (ADMIN) --- */
+        #control-panel { display: none; height: 100vh; overflow: hidden; }
+        .admin-header {
+            background-color: var(--primary); color: white;
+            padding: 15px 30px; display: flex; justify-content: space-between;
+            align-items: center;
+        }
+        .admin-container {
+            display: flex; height: calc(100vh - 60px);
+        }
+        .sidebar {
+            width: 350px; background: white;
+            padding: 20px; overflow-y: auto;
+            border-right: 1px solid #ddd;
+        }
+        .main-content {
+            flex: 1; padding: 20px; overflow-y: auto; background: #f4f1eb;
+        }
+        .card {
+            background: white; padding: 20px;
+            border-radius: 8px; margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .card h3 { margin-top: 0; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        
+        /* Form & Inputs */
+        input[type="file"], input[type="color"] { margin-bottom: 10px; width: 100%; }
+        .scanner-box {
+            background: #fff3cd; border: 2px dashed #ffeeba;
+            padding: 15px; text-align: center; border-radius: 8px;
+        }
+        .scanner-box input {
+            width: 100%; padding: 12px; font-size: 1.2rem;
+            text-align: center; border: 1px solid #ccc; border-radius: 4px;
+        }
+        
+        /* Table */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background-color: var(--primary); color: white; }
+        .btn-call {
+            background: var(--gold); color: white;
+            border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer;
+        }
+        .btn-call:hover { background: #a88a4d; }
+
+        /* Audio Player */
+        audio { width: 100%; margin-top: 10px; outline: none; }
+
+        /* --- DISPLAY SCREEN (GUEST) --- */
+        #display-screen {
+            display: none; height: 100vh; width: 100vw;
+            flex-direction: column; align-items: center; justify-content: center;
+            background: radial-gradient(circle at center, #ffffff 0%, #f3ece4 100%);
+            overflow: hidden; transition: background 0.5s ease;
+        }
+        #welcome-container {
+            text-align: center; opacity: 0;
+            transform: scale(0.8) translateY(30px);
+            transition: all 1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: rgba(255, 255, 255, 0.85);
+            padding: 50px 80px; border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+        }
+        #welcome-container.show { opacity: 1; transform: scale(1) translateY(0); }
+        .welcome-text {
+            font-size: 2.5rem; letter-spacing: 2px; font-style: italic; color: #7d6b5d; font-family: 'Georgia', serif;
+        }
+        .guest-name {
+            font-size: 5.5rem; font-weight: bold; color: var(--gold);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1); margin: 10px 0; line-height: 1.1; font-family: 'Georgia', serif;
+        }
+        .guest-category {
+            font-size: 1.8rem; color: #8c7b6c; text-transform: uppercase; letter-spacing: 3px;
+        }
+        #idle-message {
+            position: absolute; bottom: 40px;
+            font-size: 1.2rem; color: #a09388; opacity: 0.7;
+            animation: pulse 2s infinite; background: rgba(255,255,255,0.6); padding: 10px 20px; border-radius: 20px;
+        }
+        @keyframes pulse { 0% { opacity: 0.4; } 50% { opacity: 0.9; } 100% { opacity: 0.4; } }
+
+    </style>
+</head>
+<body>
+
+    <!-- 1. MODE SELECTOR -->
+    <div id="mode-selector">
+        <h1 style="color: #4a4036; margin-bottom: 10px;">Sistem Registrasi Tamu</h1>
+        <p style="margin-bottom: 40px; color: #666;">Buka file ini di dua tab terpisah untuk mengontrol dan menampilkan layar.</p>
+        <button class="mode-btn" onclick="initMode('admin')">Buka sebagai Control Panel (Admin)</button>
+        <button class="mode-btn" style="background-color: #bfa15f;" onclick="initMode('display')">Buka sebagai Layar Display (Tamu)</button>
+    </div>
+
+    <!-- 2. CONTROL PANEL (ADMIN MODE) -->
+    <div id="control-panel">
+        <div class="admin-header">
+            <h2>Control Panel - Admin</h2>
+            <span style="font-size: 0.9rem;">Status: Terhubung ke Layar Display</span>
+        </div>
+        <div class="admin-container">
+            <!-- Sidebar / Settings -->
+            <div class="sidebar">
+                <div class="card">
+                    <h3>1. Input Data CSV</h3>
+                    <input type="file" id="csv-input" accept=".csv">
+                    <small style="color: gray;">Format: ID_Tamu, Nama, Kategori</small>
+                </div>
+                
+                <div class="card">
+                    <h3>2. Musik Latar (Lokal)</h3>
+                    <input type="file" id="audio-input" accept="audio/*">
+                    <audio id="bg-music" controls loop></audio>
+                    <small style="color: gray; display: block; margin-top: 5px;">Musik diputar dari laptop Anda agar tersambung langsung ke speaker gedung.</small>
+                </div>
+
+                <div class="card">
+                    <h3>3. Kustomisasi Layar Tamu</h3>
+                    <label style="display:block; margin-bottom:5px;">Warna Latar Belakang:</label>
+                    <input type="color" id="bg-color-input" value="#f9f6f0">
+                    
+                    <label style="display:block; margin-top:15px; margin-bottom:5px;">Atau Gambar Latar Belakang:</label>
+                    <input type="file" id="bg-image-input" accept="image/png, image/jpeg">
+                    <small style="color: gray;">Max ukuran file 3MB agar sinkronisasi lancar.</small>
+                    <br><br>
+                    <button class="btn-call" onclick="resetBackground()">Reset Background</button>
+                </div>
+            </div>
+
+            <!-- Main Content / Scanner & List -->
+            <div class="main-content">
+                <div class="card scanner-box">
+                    <h3>Mode Scanner Aktif</h3>
+                    <p>Arahkan kursor ke dalam kotak di bawah ini sebelum menembak QR Code dengan alat scanner.</p>
+                    <input type="text" id="scanner-input" placeholder="Klik di sini, lalu scan barcode..." autocomplete="off">
+                </div>
+
+                <div class="card">
+                    <h3>Daftar Tamu & Simulasi Manual</h3>
+                    <table id="guest-table">
+                        <thead>
+                            <tr>
+                                <th>ID Tamu</th>
+                                <th>Nama Tamu</th>
+                                <th>Kategori</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="guest-table-body">
+                            <tr><td colspan="4" style="text-align: center; color: gray;">Belum ada data CSV yang dimuat.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. DISPLAY SCREEN (GUEST MODE) -->
+    <div id="display-screen">
+        <div id="welcome-container">
+            <div class="welcome-text">Selamat Datang,</div>
+            <div class="guest-name" id="display-name">Nama Tamu</div>
+            <div class="guest-category" id="display-category">Kategori</div>
+        </div>
+        <div id="idle-message">Menunggu tamu...</div>
+    </div>
+
+    <script>
+        // --- GLOBAL VARIABLES & CONSTANTS ---
+        const STORAGE_KEY = 'wedding_system_sync';
+        let guestsData = {}; // Menyimpan data tamu di mode Admin
+        let animationTimeout;
+
+        // --- INIT MODE ---
+        function initMode(mode) {
+            document.getElementById('mode-selector').style.display = 'none';
+            
+            if (mode === 'admin') {
+                document.getElementById('control-panel').style.display = 'block';
+                document.title = "Admin - Control Panel";
+                setupAdminLogic();
+            } else if (mode === 'display') {
+                document.getElementById('display-screen').style.display = 'flex';
+                document.title = "Layar Display Tamu";
+                setupDisplayLogic();
+            }
+        }
+
+        // --- CROSS-TAB COMMUNICATION FUNCTION ---
+        // Mengirim perintah dari Admin ke Display menggunakan LocalStorage
+        function sendCommand(action, data) {
+            const payload = {
+                timestamp: Date.now(), // Memaksa event 'storage' selalu terpicu meski datanya sama
+                action: action,
+                data: data
+            };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+        }
+
+        // --- ADMIN LOGIC (CONTROL PANEL) ---
+        function setupAdminLogic() {
+            const csvInput = document.getElementById('csv-input');
+            const tbody = document.getElementById('guest-table-body');
+            const scannerInput = document.getElementById('scanner-input');
+            
+            // 1. Parsing CSV
+            csvInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const lines = event.target.result.split(/\r?\n/);
+                    tbody.innerHTML = '';
+                    guestsData = {};
+
+                    for (let i = 1; i < lines.length; i++) { // Lewati baris 0 (Header)
+                        if (lines[i].trim() === '') continue;
+                        const cols = lines[i].split(',');
+                        if (cols.length >= 2) {
+                            const id = cols[0].trim();
+                            const name = cols[1].trim();
+                            const category = cols[2] ? cols[2].trim() : '';
+                            
+                            guestsData[id] = { name, category };
+                            
+                            // Tambah ke tabel HTML
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = `
+                                <td>${id}</td>
+                                <td><strong>${name}</strong></td>
+                                <td>${category}</td>
+                                <td><button class="btn-call" onclick="triggerScan('${id}')">Panggil</button></td>
+                            `;
+                            tbody.appendChild(tr);
+                        }
+                    }
+                };
+                reader.readAsText(file);
+            });
+
+            // 2. Logika Alat Scanner
+            scannerInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const scannedId = scannerInput.value.trim();
+                    scannerInput.value = ''; // Kosongkan
+                    triggerScan(scannedId);
+                }
+            });
+
+            // Pastikan scanner selalu fokus saat tidak mengklik input lain
+            document.querySelector('.main-content').addEventListener('click', function(e) {
+                if(e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON') {
+                    scannerInput.focus();
+                }
+            });
+
+            // 3. Audio Latar
+            const audioInput = document.getElementById('audio-input');
+            const audioPlayer = document.getElementById('bg-music');
+            audioInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    audioPlayer.src = URL.createObjectURL(file);
+                    audioPlayer.play();
+                }
+            });
+
+            // 4. Kustomisasi Layar Background
+            document.getElementById('bg-color-input').addEventListener('input', function(e) {
+                sendCommand('bg_color', e.target.value);
+            });
+
+            document.getElementById('bg-image-input').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    try {
+                        sendCommand('bg_image', event.target.result);
+                    } catch (error) {
+                        alert("Ukuran gambar terlalu besar. Silakan kompres gambar atau pilih gambar lain yang lebih kecil (di bawah 3MB).");
+                    }
+                };
+                reader.readAsDataURL(file); // Konversi ke Base64
+            });
+        }
+
+        // Fungsi pemicu tamu yang bisa dipanggil dari Scanner ATAU Tombol Simulasi
+        window.triggerScan = function(id) {
+            const guest = guestsData[id];
+            if (guest) {
+                sendCommand('scan', guest);
+            } else {
+                alert(`Data tamu dengan ID [${id}] tidak ditemukan di CSV!`);
+            }
+        };
+
+        window.resetBackground = function() {
+            document.getElementById('bg-color-input').value = "#f9f6f0";
+            document.getElementById('bg-image-input').value = "";
+            sendCommand('bg_reset', null);
+        };
+
+
+        // --- DISPLAY LOGIC (GUEST SCREEN) ---
+        function setupDisplayLogic() {
+            const displayScreen = document.getElementById('display-screen');
+            const welcomeContainer = document.getElementById('welcome-container');
+            const displayName = document.getElementById('display-name');
+            const displayCategory = document.getElementById('display-category');
+
+            // Mendengarkan perubahan data di LocalStorage (Perintah dari tab Admin)
+            window.addEventListener('storage', function(e) {
+                if (e.key === STORAGE_KEY) {
+                    if (!e.newValue) return;
+                    
+                    const cmd = JSON.parse(e.newValue);
+                    
+                    if (cmd.action === 'scan') {
+                        // Tampilkan Nama Tamu
+                        displayName.textContent = cmd.data.name;
+                        displayCategory.textContent = cmd.data.category || '';
+                        
+                        welcomeContainer.classList.remove('show');
+                        clearTimeout(animationTimeout);
+                        
+                        // Jeda kecil agar animasi refresh
+                        setTimeout(() => {
+                            welcomeContainer.classList.add('show');
+                            // Sembunyikan setelah 6 detik
+                            animationTimeout = setTimeout(() => {
+                                welcomeContainer.classList.remove('show');
+                            }, 6000);
+                        }, 50);
+                    } 
+                    else if (cmd.action === 'bg_color') {
+                        displayScreen.style.backgroundImage = 'none';
+                        displayScreen.style.backgroundColor = cmd.data;
+                    } 
+                    else if (cmd.action === 'bg_image') {
+                        displayScreen.style.background = `url(${cmd.data}) no-repeat center center fixed`;
+                        displayScreen.style.backgroundSize = 'cover';
+                    }
+                    else if (cmd.action === 'bg_reset') {
+                        displayScreen.style.background = 'radial-gradient(circle at center, #ffffff 0%, #f3ece4 100%)';
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
