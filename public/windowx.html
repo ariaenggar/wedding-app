@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Kontrol Multi-Layar Registrasi</title>
+    <style>
+        body { font-family: sans-serif; padding: 40px; text-align: center; }
+        button { padding: 15px 25px; font-size: 16px; cursor: pointer; background: #007BFF; color: white; border: none; border-radius: 5px; }
+        #log { margin-top: 20px; color: #333; font-weight: bold; }
+    </style>
+</head>
+<body>
+<h2>Dasbor Operator Registrasi</h2>
+<p>Pastikan proyektor sudah terhubung dalam mode "Extend Display".</p>
+
+<button id="openProjectorBtn">Buka Animasi di Layar Proyektor</button>
+<div id="log"></div>
+
+<script>
+    document.getElementById('openProjectorBtn').addEventListener('click', async () => {
+        const logElement = document.getElementById('log');
+
+        try {
+            // 1. Mengecek apakah browser mendukung Window Management API
+            if (!('getScreenDetails' in window)) {
+                logElement.innerText = 'Browser Anda tidak mendukung Window Management API. Gunakan Chrome atau Edge versi terbaru.';
+                return;
+            }
+
+            // 2. Meminta izin pengguna (browser akan menampilkan pop-up permission)
+            const screenDetails = await window.getScreenDetails();
+
+            // 3. Mencari layar eksternal (layar yang bukan tempat tombol ini diklik)
+            const externalScreen = screenDetails.screens.find(
+                screen => screen !== screenDetails.currentScreen
+            );
+
+            if (externalScreen) {
+                logElement.innerText = `Layar eksternal ditemukan: ${externalScreen.label}. Membuka jendela...`;
+
+                // 4. Menentukan fitur jendela baru menggunakan koordinat absolut layar eksternal
+                const windowFeatures = `
+                        left=${externalScreen.availLeft},
+                        top=${externalScreen.availTop},
+                        width=${externalScreen.availWidth},
+                        height=${externalScreen.availHeight},
+                        fullscreen=yes,
+                        menubar=no,
+                        toolbar=no
+                    `;
+
+                // 5. Membuka file receiver (Layar 2) tepat di monitor proyektor
+                window.open('receiver.html', '_blank', windowFeatures);
+            } else {
+                logElement.innerText = 'Layar eksternal tidak terdeteksi. Hanya ada 1 layar yang aktif.';
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            logElement.innerText = 'Izin akses layar ditolak oleh pengguna atau terjadi kesalahan.';
+        }
+    });
+</script>
+</body>
+</html>
