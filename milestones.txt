@@ -1,29 +1,149 @@
 Wedding System Plan
 
-• Undangan Digital
-- landing page
-- themes
-- lokasi dan waktu acara
-- peta
-- pengingat terbatas
-- tombol tambahkan ke pengingat kalender
-- live streaming
-- musik
-- foto pengantin
-- galeri foto & video
-- rekening/qris penerimaan nyecep
-- nama pengantin
-- konfirmasi kehadiran
-- form ucapan
+==================================================
+1. UNDANGAN DIGITAL
+==================================================
+Membuat undangan pernikahan digital yang interaktif dan mudah disebarkan.
 
-• Undian Digital untuk Tamu: Mengadakan semacam undian (doorprize) yang dikirimkan secara langsung dan interaktif ke HP masing-masing peserta atau tamu undangan.
+Konten utama
+- Landing page / cover (nama tamu personal via URL, mis. ?to=Nama)
+- Nama pengantin
+- Foto pengantin
+- Lokasi dan waktu acara (akad & resepsi)
+- Peta (embed Google Maps + tombol "Buka di Maps")
+- Galeri foto & video
 
-• Aplikasi Kamera Sekali Pakai Digital: Menggunakan platform digital yang mengubah ponsel pintar tamu menjadi "kamera sekali pakai" untuk mengabadikan momen pernikahan secara candid.
+Interaktif
+- Pengingat terbatas / countdown menuju hari acara
+- Tombol tambahkan ke pengingat kalender (Google Calendar + file .ics)
+- Konfirmasi kehadiran / RSVP (hadir/tidak, jumlah orang)
+- Form ucapan & doa (ditampilkan sebagai daftar ucapan)
+- Musik latar (autoplay setelah undangan dibuka, tombol play/pause)
+- Live streaming (link / embed)
 
-• Berbagi Foto via QR Code: Memudahkan tamu untuk mengambil dan membagikan foto atau video cukup dengan memindai kode QR.
+Amplop digital
+- Rekening bank (tombol salin nomor)
+- QRIS (gambar + tombol unduh)
 
-• Live Photo Wall (Dinding Foto Langsung): Mengubah layar TV atau proyektor di lokasi acara menjadi tayangan slide (slideshow) interaktif yang menampilkan foto-foto jepretan tamu secara real-time.
+Admin / kustomisasi
+- Pilihan themes (warna, font, layout)
+- Kelola daftar tamu + generate link personal per tamu
+- Bagikan link undangan (WhatsApp, salin link)
+- Dashboard rekap RSVP & ucapan
 
-• Album Kenangan Bersama (Shared Album): Mengumpulkan foto dari seluruh tamu dalam satu album digital dengan opsi tampilan instan atau dirahasiakan terlebih dahulu.
+==================================================
+2. UNDIAN DIGITAL UNTUK TAMU (DOORPRIZE)
+==================================================
+Undian doorprize yang dikirim langsung dan interaktif ke HP masing-masing tamu.
 
-• Undangan Digital: Membuat undangan pernikahan digital yang interaktif dan mudah disebarkan.
+- Registrasi peserta (otomatis dari RSVP/check-in, atau scan QR di lokasi)
+- Kelola daftar hadiah (nama, jumlah, urutan)
+- Halaman pengundian untuk layar besar (animasi acak + pemenang)
+- Notifikasi real-time ke HP pemenang
+- Halaman peserta di HP: status "menunggu undian" / "Anda menang!"
+- Riwayat pemenang; satu orang hanya bisa menang sekali
+- Aturan kelayakan (mis. hanya tamu yang sudah check-in)
+
+==================================================
+3. KAMERA SEKALI PAKAI DIGITAL
+==================================================
+Mengubah ponsel tamu menjadi "kamera sekali pakai" untuk momen candid.
+
+- Akses kamera via browser tanpa install aplikasi
+- Batas jumlah jepretan per tamu (mis. 24/36)
+- Penghitung sisa jepretan
+- Filter / efek ala film (grain, vintage) - opsional
+- Identitas tamu (nama / sesi sederhana tanpa login)
+- Upload otomatis ke album acara
+- Foto tidak bisa langsung dilihat/dihapus sampai waktu tertentu (efek "cuci film")
+
+==================================================
+4. BERBAGI FOTO VIA QR CODE
+==================================================
+Tamu mengambil dan membagikan foto/video cukup dengan memindai QR code.
+
+- Generate QR code unik per acara (siap cetak / dipajang)
+- Scan QR -> langsung ke halaman upload / kamera
+- Upload foto & video dari galeri HP (multi-file)
+- Validasi file (tipe, ukuran) + kompresi
+- QR per meja / per sesi untuk pengelompokan foto - opsional
+
+==================================================
+5. LIVE PHOTO WALL (DINDING FOTO LANGSUNG)
+==================================================
+Layar TV/proyektor di lokasi menampilkan slideshow foto tamu secara real-time.
+
+- Halaman slideshow fullscreen untuk TV/proyektor
+- Update real-time saat ada foto baru masuk (WebSocket / polling)
+- Moderasi admin: approve / sembunyikan foto sebelum tampil
+- Pengaturan tampilan: durasi per slide, transisi, layout grid/tunggal
+- Overlay nama pengirim, ucapan, dan QR code ajakan upload
+- Prioritaskan foto terbaru, lalu putar ulang foto lama
+
+==================================================
+6. ALBUM KENANGAN BERSAMA (SHARED ALBUM)
+==================================================
+Mengumpulkan foto seluruh tamu dalam satu album digital, tampil instan atau dirahasiakan dulu.
+
+- Album terpusat semua foto & video tamu (dari modul 3 & 4)
+- Mode tampilan:
+  - Instan: langsung terlihat oleh semua tamu
+  - Dirahasiakan: dibuka pada tanggal/jam tertentu (reveal)
+- Filter / urutkan per pengirim, waktu, jenis (foto/video)
+- Unduh satuan atau unduh semua (ZIP) untuk pengantin
+- Privasi: album publik / dilindungi PIN atau link
+- Admin bisa hapus konten yang tidak pantas
+
+==================================================
+7. CHECK-IN TAMU VIA QR (PRIVATE / INVITATION-ONLY)
+==================================================
+Untuk acara private: hanya tamu terundang yang bisa masuk, diverifikasi dengan scan QR di pintu masuk.
+
+Sisi tamu
+- QR code unik per tamu, tampil di undangan personal (bisa diunduh / disimpan)
+- QR berisi token acak yang ditandatangani (bukan data tamu mentah) agar tidak bisa dipalsukan
+- Kirim QR via WhatsApp / email setelah RSVP konfirmasi hadir
+- Info jumlah orang yang diizinkan (sesuai kuota RSVP / plus-one)
+
+Sisi penerima tamu (petugas)
+- Halaman scanner QR via kamera HP / tablet (web, tanpa install)
+- Login petugas (PIN / akun usher) agar scanner tidak bisa diakses umum
+- Hasil scan: VALID (nama, kategori VIP/keluarga, jumlah orang, nomor meja) /
+  SUDAH CHECK-IN (tampilkan jam sebelumnya) / TIDAK VALID / BUKAN ACARA INI
+- Cegah QR dipakai ulang (satu QR = satu kali check-in, atau sesuai kuota orang)
+- Input jumlah orang yang benar-benar datang
+- Pencarian manual nama tamu (fallback jika HP tamu mati / QR hilang)
+- Tambah tamu walk-in dengan persetujuan admin - opsional
+- Mode offline: cache daftar tamu, sinkron saat online kembali - opsional
+
+Admin
+- Mode acara: publik vs private (invitation-only)
+- Dashboard kehadiran real-time (jumlah hadir vs diundang, per kategori)
+- Log check-in (waktu, petugas, perangkat)
+- Cabut / regenerate QR tamu tertentu
+- Export daftar hadir (CSV/Excel)
+
+Integrasi
+- Status check-in jadi syarat kelayakan Undian Digital (modul 2)
+- Check-in membuka akses Kamera / Album untuk tamu tersebut (modul 3, 4, 6)
+- Sambutan nama tamu di Live Photo Wall saat check-in - opsional (modul 5)
+
+==================================================
+FONDASI BERSAMA (LINTAS MODUL)
+==================================================
+- Manajemen Acara: satu event sebagai induk semua modul
+- Manajemen Tamu: dipakai undangan, RSVP, undian, dan identitas pengirim foto
+- Storage media untuk upload foto/video
+- Real-time (undian & live photo wall)
+- Dashboard admin untuk pengantin / penyelenggara
+
+==================================================
+URUTAN PENGERJAAN (USULAN)
+==================================================
+1. Fondasi (Manajemen Acara & Tamu)
+2. Undangan Digital
+3. Check-in Tamu via QR (private / invitation-only)
+4. Berbagi Foto via QR Code + Kamera Sekali Pakai
+5. Album Kenangan Bersama
+6. Live Photo Wall
+7. Undian Digital
