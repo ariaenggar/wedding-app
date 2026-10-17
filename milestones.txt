@@ -1,0 +1,29 @@
+Wedding System Plan
+
+• Undangan Digital
+- landing page
+- themes
+- lokasi dan waktu acara
+- peta
+- pengingat terbatas
+- tombol tambahkan ke pengingat kalender
+- live streaming
+- musik
+- foto pengantin
+- galeri foto & video
+- rekening/qris penerimaan nyecep
+- nama pengantin
+- konfirmasi kehadiran
+- form ucapan
+
+• Undian Digital untuk Tamu: Mengadakan semacam undian (doorprize) yang dikirimkan secara langsung dan interaktif ke HP masing-masing peserta atau tamu undangan.
+
+• Aplikasi Kamera Sekali Pakai Digital: Menggunakan platform digital yang mengubah ponsel pintar tamu menjadi "kamera sekali pakai" untuk mengabadikan momen pernikahan secara candid.
+
+• Berbagi Foto via QR Code: Memudahkan tamu untuk mengambil dan membagikan foto atau video cukup dengan memindai kode QR.
+
+• Live Photo Wall (Dinding Foto Langsung): Mengubah layar TV atau proyektor di lokasi acara menjadi tayangan slide (slideshow) interaktif yang menampilkan foto-foto jepretan tamu secara real-time.
+
+• Album Kenangan Bersama (Shared Album): Mengumpulkan foto dari seluruh tamu dalam satu album digital dengan opsi tampilan instan atau dirahasiakan terlebih dahulu.
+
+• Undangan Digital: Membuat undangan pernikahan digital yang interaktif dan mudah disebarkan.
